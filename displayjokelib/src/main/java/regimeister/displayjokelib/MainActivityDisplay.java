@@ -14,17 +14,12 @@ public class MainActivityDisplay extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.joke_activity_main);
 
-
         try {
             String joke = getIntent().getExtras().getString("joke");
-            ((TextView)findViewById(R.id.txt_main)).setText(joke+"edit");
+            ((TextView)findViewById(R.id.txt_main)).setText(joke);
         }catch (Exception e){
-            Toast.makeText(getApplicationContext(),"no bundle :(",Toast.LENGTH_LONG).show();
             Log.wtf("regi",">>"  + e.getMessage());
         }
-
-
-
 
     }
 }

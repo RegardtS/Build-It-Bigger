@@ -21,6 +21,15 @@ android {
     dexOptions {
         javaMaxHeapSize "4g"
     }
+
+    productFlavors {
+        free {
+            applicationId "com.udacity.gradle.builditbigger.free"
+        }
+        paid {
+            applicationId "com.udacity.gradle.builditbigger"
+        }
+    }
 }
 
 
@@ -30,8 +39,9 @@ dependencies {
 //    compile project(':joker')
     compile project(':displayjokelib')
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.google.android.gms:play-services:8.3.0'
+    freeCompile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services-ads:8.3.0'
+    testCompile 'junit:junit:4.12'
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
