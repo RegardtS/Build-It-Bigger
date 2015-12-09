@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,9 @@ import android.widget.Toast;
 //import com.example.MyClass;
 
 import com.example.regardt.myapplication.backend.myApi.MyApi;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
@@ -28,11 +32,31 @@ import regimeister.displayjokelib.MainActivityDisplay;
 public class MainActivity extends AppCompatActivity {
 
     ProgressDialog progress;
+    InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                startSomething();
+            }
+        });
+
+        requestNewInterstitial();
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("ABCDEF012345")
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
 
@@ -61,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+           // startSomething();
+            Log.w("regi","nope");
+        }
+    }
+
+    private void startSomething(){
         if(progress == null){
             progress = new ProgressDialog(this);
             progress.setMessage("Getting a joke for you ;) ");
@@ -77,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        progress.dismiss();
+        if(progress != null){
+            progress.dismiss();
+        }
 
         super.onPause();
     }
