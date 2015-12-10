@@ -1,12 +1,15 @@
 package com.udacity.gradle.builditbigger;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.util.Pair;
 import android.test.AndroidTestCase;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 
@@ -17,62 +20,75 @@ import java.util.concurrent.TimeUnit;
 
 public class JokeTest extends InstrumentationTestCase {
 
+
+    private Context instrumantationCtx;
+
     public void testStringNotNull(){
-        assertEquals(true,true);
-    }
 
-    public void testSomeAsynTask () throws Throwable {
-        // create  a signal to let us know when our task is done.
-        final CountDownLatch signal = new CountDownLatch(1);
+        instrumantationCtx = getInstrumentation().getContext();
 
-    /* Just create an in line implementation of an asynctask. Note this
-     * would normally not be done, and is just here for completeness.
-     * You would just use the task you want to unit test in your project.
-     */
-        final AsyncTask<String, Void, String> myTask = new AsyncTask<String, Void, String>() {
+
+
+        final Object randomLock = new Object();
+        final Semaphore sem =
+                new Semaphore(1);
+        final EndpointsAsyncTask x = new EndpointsAsyncTask(){
 
             @Override
-            protected String doInBackground(String... arg0) {
-                //Do something meaningful.
-                return "something happened!";
+            protected void onPreExecute() {
+                super.onPreExecute();
+                try {
+                    Log.wtf("regi", "resutl==1");
+                    sem.acquire();
+                    Log.wtf("regi", "resutl==2");
+                } catch (Exception e){
+                    Log.wtf("regi", "resutl==3");
+                    e.printStackTrace();
+                }
             }
 
             @Override
             protected void onPostExecute(String result) {
                 super.onPostExecute(result);
+                Log.wtf("regi", "resutl==" + result);
+                sem.release();
 
-            /* This is the key, normally you would use some type of listener
-             * to notify your activity that the async call was finished.
-             *
-             * In your test method you would subscribe to that and signal
-             * from there instead.
-             */
-                signal.countDown();
+
+                assertNotNull(result);
+                assertTrue(result.isEmpty());
+
             }
         };
 
 
 
-        // Execute the async task on the UI thread! THIS IS KEY!
-        runTestOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                myTask.execute("Do something");
-            }
-        });
 
-    /* The testing thread will wait here until the UI thread releases it
-     * above with the countDown() or 30 seconds passes and it times out.
-     */
-        signal.await(30, TimeUnit.SECONDS);
+        try {
 
-        // The task is done, and now you can assert some things!
-        assertTrue("Happiness", true);
+
+                    x.execute(new Pair<Context, String>(instrumantationCtx, "Manfred"));
+
+
+            Log.wtf("regi", "resutl==4");
+            sem.acquire();
+            Log.wtf("regi", "resutl==5");
+
+
+
+
+        } catch (Throwable throwable ){
+
+            throwable.printStackTrace();
+            Log.wtf("regi", throwable.getMessage());
+            System.out.println(throwable.getMessage());
+            assertTrue(false);
+        }finally {
+            assertTrue(false);
+        }
+
+
     }
-
-
-
 
 
 }
