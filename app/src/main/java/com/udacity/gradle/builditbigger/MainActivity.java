@@ -38,17 +38,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
-        mInterstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                startSomething();
-            }
-        });
+        if(BuildConfig.FREE_VERSION){
+            mInterstitialAd = new InterstitialAd(this);
+            mInterstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
 
-        requestNewInterstitial();
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    startSomething();
+                }
+            });
+            requestNewInterstitial();
+        }
     }
 
     private void requestNewInterstitial() {
@@ -85,11 +87,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
 
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-           // startSomething();
-            Log.w("regi","nope");
+        if(BuildConfig.FREE_VERSION){
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                startSomething();
+            }
+        }else{
+            startSomething();
         }
     }
 
@@ -104,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         progress.show();
 
 
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
+        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "tester"));
     }
 
 

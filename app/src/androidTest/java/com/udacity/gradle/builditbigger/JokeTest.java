@@ -30,8 +30,7 @@ public class JokeTest extends InstrumentationTestCase {
 
 
         final Object randomLock = new Object();
-        final Semaphore sem =
-                new Semaphore(1);
+        final Semaphore sem =new Semaphore(1);
         final EndpointsAsyncTask x = new EndpointsAsyncTask(){
 
             @Override
@@ -49,15 +48,17 @@ public class JokeTest extends InstrumentationTestCase {
 
             @Override
             protected void onPostExecute(String result) {
-                super.onPostExecute(result);
+                //super.onPostExecute(result);
                 Log.wtf("regi", "resutl==" + result);
                 sem.release();
 
-
+                Log.wtf("regi", "resutl==1aasasas16");
                 assertNotNull(result);
-                assertTrue(result.isEmpty());
+                assertFalse(result.isEmpty());
 
             }
+
+
         };
 
 
@@ -67,7 +68,7 @@ public class JokeTest extends InstrumentationTestCase {
         try {
 
 
-                    x.execute(new Pair<Context, String>(instrumantationCtx, "Manfred"));
+            x.execute(new Pair<Context, String>(instrumantationCtx, "Manfred"));
 
 
             Log.wtf("regi", "resutl==4");
@@ -79,12 +80,10 @@ public class JokeTest extends InstrumentationTestCase {
 
         } catch (Throwable throwable ){
 
-            throwable.printStackTrace();
-            Log.wtf("regi", throwable.getMessage());
-            System.out.println(throwable.getMessage());
+            Log.wtf("regi", "resutl==115");
+            Log.wtf("regi", "resutl==115 " + throwable.getMessage());
             assertTrue(false);
-        }finally {
-            assertTrue(false);
+            Log.wtf("regi", "resutl==116");
         }
 
 

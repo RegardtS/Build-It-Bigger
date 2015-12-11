@@ -25,18 +25,38 @@ android {
     productFlavors {
         free {
             applicationId "com.udacity.gradle.builditbigger.free"
+            buildConfigField "boolean", "FREE_VERSION", "true"
         }
         paid {
             applicationId "com.udacity.gradle.builditbigger"
+            buildConfigField "boolean", "FREE_VERSION", "false"
         }
     }
+}
+
+
+
+
+task customTaskThingy << {
+    tasks.test
+    println "customTaskThingy"
+}
+
+tasks.customTaskThingy.doLast {
+    println "last"
+    //task shutdownBackend(dependsOn: [':backend:appengineStop']) << {}
+}
+tasks.customTaskThingy.doFirst (dependsOn: [':backend:appengineRun']){
+    println "first"
+
+
+
 }
 
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // Added for AdMob
-//    compile project(':joker')
     compile project(':displayjokelib')
     compile 'com.android.support:appcompat-v7:23.1.1'
     freeCompile 'com.google.android.gms:play-services:8.3.0'
