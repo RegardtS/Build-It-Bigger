@@ -49,11 +49,11 @@ dependencies {
 }
 
 
-def newVersionCode = generateBuildTime()
+def currentTimeDate = generateBuildTime()
 
 def generateBuildTime() {
     def df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss")
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    df.setTimeZone(TimeZone.getTimeZone("GMT"))
     return df.format(new Date())
 }
 
@@ -76,7 +76,7 @@ task myAwesomeTask (dependsOn:
     doFirst{
         clean
     }
-} << {println "Finished at $newVersionCode GMT"}
+} << {println "Finished at $currentTimeDate GMT"}
 
 
 
