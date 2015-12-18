@@ -20,16 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 public class JokeTest extends InstrumentationTestCase {
 
-
-    private Context instrumantationCtx;
-
     public void testStringNotNull(){
 
-        instrumantationCtx = getInstrumentation().getContext();
+        Context instrumantationCtx = getInstrumentation().getContext();
 
-
-
-        final Object randomLock = new Object();
         final Semaphore sem =new Semaphore(1);
         final EndpointsAsyncTask x = new EndpointsAsyncTask(){
 
@@ -37,53 +31,27 @@ public class JokeTest extends InstrumentationTestCase {
             protected void onPreExecute() {
                 super.onPreExecute();
                 try {
-                    Log.wtf("regi", "resutl==1");
                     sem.acquire();
-                    Log.wtf("regi", "resutl==2");
                 } catch (Exception e){
-                    Log.wtf("regi", "resutl==3");
                     e.printStackTrace();
+                    throw new AssertionError();
                 }
             }
 
             @Override
             protected void onPostExecute(String result) {
-                //super.onPostExecute(result);
-                Log.wtf("regi", "resutl==" + result);
                 sem.release();
 
-                Log.wtf("regi", "resutl==1aasasas16");
                 assertNotNull(result);
                 assertFalse(result.isEmpty());
-
             }
-
-
         };
-
-
-
-
-
         try {
 
-
             x.execute(new Pair<Context, String>(instrumantationCtx, "Manfred"));
-
-
-            Log.wtf("regi", "resutl==4");
             sem.acquire();
-            Log.wtf("regi", "resutl==5");
-
-
-
-
         } catch (Throwable throwable ){
-
-            Log.wtf("regi", "resutl==115");
-            Log.wtf("regi", "resutl==115 " + throwable.getMessage());
-            assertTrue(false);
-            Log.wtf("regi", "resutl==116");
+            throw new AssertionError();
         }
 
 

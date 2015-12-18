@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 apply plugin: 'com.android.application'
 
 android {
@@ -34,34 +36,89 @@ android {
     }
 }
 
-
-
-
-task customTaskThingy << {
-    tasks.test
-    println "customTaskThingy"
-}
-
-tasks.customTaskThingy.doLast {
-    println "last"
-    //task shutdownBackend(dependsOn: [':backend:appengineStop']) << {}
-}
-tasks.customTaskThingy.doFirst (dependsOn: [':backend:appengineRun']){
-    println "first"
-
-
-
-}
-
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // Added for AdMob
     compile project(':displayjokelib')
     compile 'com.android.support:appcompat-v7:23.1.1'
-    freeCompile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services-ads:8.3.0'
+    freeCompile 'com.google.android.gms:play-services-ads:8.3.0'
     testCompile 'junit:junit:4.12'
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
+
+
+def newVersionCode = generateBuildTime()
+
+def generateBuildTime() {
+    def df = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss")
+    df.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return df.format(new Date())
+}
+
+task myAwesomeTask (dependsOn:
+        [":backend:appengineRun",
+         ":app:connectedAndroidTest",
+         ":backend:appengineStop"]) {
+
+    evaluationDependsOn ":backend"
+
+    project(":backend") {
+        appengine {
+            daemon true
+        }
+    }
+
+    group 'Where all the awesome tasks are'
+    description 'Starts up the GCE local server, runs all unit tests and then shuts down the GCE'
+
+    doFirst{
+        clean
+    }
+} << {println "Finished at $newVersionCode GMT"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
